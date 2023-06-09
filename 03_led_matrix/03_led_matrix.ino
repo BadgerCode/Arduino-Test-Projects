@@ -6,7 +6,10 @@
 const int latchPin = 8;   //Pin connected to ST_CP of 74HC595
 const int clockPin = 12;  //Pin connected to SH_CP of 74HC595
 const int dataPin = 11;   //Pin connected to DS of 74HC595
-int data[] = {
+
+int numCharacters = 18;
+int columns[] = {
+  // list of column values (each bit is one pixel in the column)
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, /*” “,0*/
   0xFF, 0xC1, 0xBE, 0xBE, 0xBE, 0xC1, 0xFF, 0xFF, /*”0″,1*/
   0xFF, 0xDF, 0xDF, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, /*”1″,2*/
@@ -26,28 +29,42 @@ int data[] = {
   0xFF, 0x80, 0xB7, 0xB7, 0xB7, 0xB7, 0xBF, 0xFF, /*”F”,16*/
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, /*” “,17*/
 };
+int numVisibleColumns = 8;
+int numColumns = numCharacters * numVisibleColumns;
+
+int currentColumn = 0;
+
 void setup() {
   //set pins to output
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
 }
+
+
+
 void loop() {
-  for (int n = 0; n < 136; n++) {
-    for (int t = 0; t < 10; t++)  //Show repeated 10 times
-    {
-      int dat = 0x01;
-      for (int num = n; num < 8 + n; num++) {
-        shiftOut(dataPin, clockPin, MSBFIRST, ~data[num]);  //control ROW of dot matrix
-        shiftOut(dataPin, clockPin, MSBFIRST, ~dat);        //control COL of dot matrix
-        //return the latch pin high to signal chip that it
-        //no longer needs to listen for information
-        digitalWrite(latchPin, HIGH);  //pull the latchPin to save the data
-        //delay(1); //wait for a microsecond
-        digitalWrite(latchPin, LOW);  //ground latchPin and hold low for as long as you are transmitting
-        dat = dat << 1;
-        delay(1);  //wait for a microsecond
-      }
+
+  // Render the current set of columns 10 times (for some reason; without this, it flicked and letters aren't persistent)
+  for (int t = 0; t < 10; t++) {
+    int matrixColumn = 0x01;
+
+    // Starting with the current column, render it and the next 7 columns
+    for (int columnIndex = currentColumn; columnIndex < numVisibleColumns + currentColumn; columnIndex++) {
+      shiftOut(dataPin, clockPin, MSBFIRST, ~columns[columnIndex]);  //control ROW of dot matrix
+      shiftOut(dataPin, clockPin, MSBFIRST, ~matrixColumn);          //control COL of dot matrix
+      //return the latch pin high to signal chip that it
+      //no longer needs to listen for information
+      digitalWrite(latchPin, HIGH);  //pull the latchPin to save the data
+      //delay(1); //wait for a microsecond
+      digitalWrite(latchPin, LOW);       //ground latchPin and hold low for as long as you are transmitting
+      matrixColumn = matrixColumn << 1;  // Move to next matrix column
+      delay(1);                          //wait for a microsecond
     }
+  }
+
+  currentColumn++;
+  if (currentColumn >= (numColumns - numVisibleColumns)) {
+    currentColumn = 0;
   }
 }

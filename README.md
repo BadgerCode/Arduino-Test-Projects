@@ -5,3 +5,7 @@
 * [blink example](https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay)
 * [LED matrix example](https://docs.arduino.cc/built-in-examples/display/RowColumnScanning)
 * [Sunfounder kit guides](https://learn.sunfounder.com/category/super-kit-v2-0-for-arduino/)
+
+
+# 3 LED matrix
+* https://learn.sunfounder.com/lesson-12-dot-matrix-led-display/
