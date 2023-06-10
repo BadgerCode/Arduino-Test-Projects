@@ -48,35 +48,62 @@ void setup() {
 }
 
 
+int Face_OffsetX = 0; // OffsetX doesn't work, because the LEDs from one panel don't wrap to the next panel
+int Face_OffsetY = 0;
+int Face_OffsetY_Dir = 1;
+int OffsetDelay = 200;
+unsigned long NextOffsetShift = millis() + OffsetDelay;
+
 void loop() {
   // Mouth
-  renderPanel(PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false);
-  renderPanel(PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false);
-  renderPanel(PANEL_MOUTH_LEFT_3, Mouth_Normal[2], false);
-  renderPanel(PANEL_MOUTH_LEFT_4, Mouth_Normal[3], false);
+  renderPanel(PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, Face_OffsetX, Face_OffsetY);
+  renderPanel(PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false, Face_OffsetX, Face_OffsetY);
+  renderPanel(PANEL_MOUTH_LEFT_3, Mouth_Normal[2], false, Face_OffsetX, Face_OffsetY);
+  renderPanel(PANEL_MOUTH_LEFT_4, Mouth_Normal[3], false, Face_OffsetX, Face_OffsetY);
 
 
   // Nose
   // Reversed rows & columns (the panel is rotated 180 degrees currently)
-  renderPanel(PANEL_NOSE_LEFT, Nose_Normal, true);
+  renderPanel(PANEL_NOSE_LEFT, Nose_Normal, true, 0, 0);
 
   // Eyes
   // Reversed rows & columns (the panel is rotated 180 degrees currently)
-  renderPanel(PANEL_EYE_LEFT_1, Eye_Normal[0], true);
-  renderPanel(PANEL_EYE_LEFT_2, Eye_Normal[1], true);
+  renderPanel(PANEL_EYE_LEFT_1, Eye_Normal[0], true, Face_OffsetX, Face_OffsetY);
+  renderPanel(PANEL_EYE_LEFT_2, Eye_Normal[1], true, Face_OffsetX, Face_OffsetY);
+
+
+  // Offset the face to do a basic animation
+  unsigned long curTime = millis();
+  if (curTime >= NextOffsetShift) {
+    NextOffsetShift = curTime + OffsetDelay;
+
+    Face_OffsetY += Face_OffsetY_Dir;
+
+    if (Face_OffsetY >= 1) {
+      Face_OffsetY_Dir = -1;
+    } else if (Face_OffsetY <= -1) {
+      Face_OffsetY_Dir = 1;
+    }
+  }
 }
 
 
 
 
 
-void renderPanel(int panelIndex, byte data[], bool isReversed) {
+void renderPanel(int panelIndex, byte data[], bool isReversed, int offsetX, int offsetY) {
   for (int row = 0; row < 8; row++) {
+    int rowIndex = row + offsetY;
+    if (rowIndex < 0 || rowIndex >= 8) {
+      lc.setRow(panelIndex, row, 0);
+      continue;
+    }
+
     byte columnData = 0;
     if (isReversed) {
-      columnData = reverse(data[7 - row]);
+      columnData = reverse(data[7 - rowIndex] << offsetX);
     } else {
-      columnData = data[row];
+      columnData = data[rowIndex] << offsetX;
     }
 
     lc.setRow(panelIndex, row, columnData);
