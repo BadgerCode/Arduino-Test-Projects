@@ -43,6 +43,7 @@ int expressionFrames[expressionFramesCount][numVisibleColumns] = {
   // { B00011000, B00111100, B00111100, B01111110, B01111110, B00111100, B00111100, B00011000 },  // Oval eye open
   // { B01000110, B11100111, B11111111, B11111111, B11111111, B01111110, B00111100, B00011000 },  // Heart
 };
+int protoBlink[numVisibleColumns] = { B00000000, B00000110, B00001001, B00000000, B11000011, B00011100, B01100000, B00000000 };
 
 
 
@@ -72,6 +73,8 @@ unsigned long nextBlinkMs = millis() + blinkDelayMs;
 
 int expressionFrameIndex = 0;
 unsigned long nextExpressionMs = millis() + random(7000) + 3000;
+int expressionBlinkDelayMs = 1500;
+unsigned long nextExpressionBlinkMs = millis() + expressionBlinkDelayMs;
 
 
 void loop() {
@@ -93,7 +96,15 @@ void loop() {
       } else if (currentMs >= (nextExpressionMs + 1000)) {
         // Reset to neutral expression
         expressionFrameIndex = 0;
-        nextExpressionMs = millis() + random(7000) + 3000;
+        nextExpressionMs = currentMs + random(7000) + 3000;
+        nextExpressionBlinkMs = currentMs + expressionBlinkDelayMs;
+        currentFrame = expressionFrames[expressionFrameIndex];
+      }
+    } else if (currentMs >= nextExpressionBlinkMs) {
+      currentFrame = protoBlink;
+
+      if (currentMs >= (nextExpressionBlinkMs + 500)) {
+        nextExpressionBlinkMs = currentMs + expressionBlinkDelayMs;
         currentFrame = expressionFrames[expressionFrameIndex];
       }
     }
