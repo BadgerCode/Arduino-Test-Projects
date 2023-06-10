@@ -19,11 +19,18 @@ void setup() {
 }
 
 bool patternA = true;
-
 unsigned long nextFlipPattern = millis() + 1000;
 
+int Cat[8] = { B10001000, B11111000, B10101000, B01110001, B00100001, B01111001, B01111101, B10111110 };
+
 void loop() {
-  for (int address = 0; address < numPanels; address++) {
+  // Render cat
+  for (int i = 0; i < 8; i++) {
+    lc.setRow(0, i, Cat[i]);
+  }
+
+  // Skip address 0
+  for (int address = 1; address < numPanels; address++) {
     for (int row = 0; row < 8; row++) {
       if (patternA)
         lc.setRow(address, row, B01010101);
