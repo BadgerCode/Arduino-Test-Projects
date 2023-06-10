@@ -12,3 +12,9 @@
 * Matrix editor
     * https://xantorohara.github.io/led-matrix-editor
 
+# 5 LED matrix quad
+* 2 x 4 x 8x8 LEDs
+* 2 blocks of 4 8x8 matrices
+* One block daisy chained to the first
+* Separate USB power supply for matrices
+* Make sure ground of USB is connected to ground of arduino too
