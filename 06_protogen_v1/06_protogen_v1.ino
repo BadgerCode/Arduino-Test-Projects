@@ -2,15 +2,24 @@
 
 
 int TemperatureAnalogPin = 0;
+int DistanceAnalogPin = 1;
+
+int Brightness = 6;  // 0 - 15
 
 
+int PIN_LEFT_DIN = 11;
+int PIN_LEFT_CS = 3;
+int PIN_LEFT_CLK = 13;
+int LEFT_NUM_PANELS = 8;
+LedControl LEFT_LEDs = LedControl(PIN_LEFT_DIN, PIN_LEFT_CLK, PIN_LEFT_CS, LEFT_NUM_PANELS);
 
-int DIN = 11;
-int CS = 3;
-int CLK = 13;
-int numPanels = 8;
 
-LedControl lc = LedControl(DIN, CLK, CS, numPanels);
+int PIN_RIGHT_DIN = 7;
+int PIN_RIGHT_CS = 6;
+int PIN_RIGHT_CLK = 5;
+int RIGHT_NUM_PANELS = 2;
+LedControl RIGHT_LEDs = LedControl(PIN_RIGHT_DIN, PIN_RIGHT_CLK, PIN_RIGHT_CS, RIGHT_NUM_PANELS);
+
 
 
 int PANEL_MOUTH_LEFT_1 = 3;
@@ -25,7 +34,7 @@ int PANEL_EYE_LEFT_2 = 7;
 
 
 
-
+// Neutral animation
 byte Nose_Normal[1][8] = {
   { B00000000, B00000000, B00000000, B00000000, B00000000, B01111000, B11000000, B10000000 }
 };
@@ -33,6 +42,11 @@ byte Nose_Normal[1][8] = {
 byte Eye_Normal[2][8] = {
   { B00000000, B00000011, B00001111, B00111111, B01111111, B11111111, B11111110, B11100000 },
   { B00000000, B11100000, B11111000, B11111100, B11111110, B11111111, B00000000, B00000000 }
+};
+
+byte Eye_Blink[2][8] = {
+  { B00000000, B00000000, B00000000, B00000111, B00001111, B00111111, B11100000, B00000000 },
+  { B00000000, B00000000, B00000000, B11000000, B11100000, B11111111, B00000000, B00000000 }
 };
 
 byte Mouth_Normal[4][8] = {
@@ -43,21 +57,81 @@ byte Mouth_Normal[4][8] = {
 };
 
 
-byte Eye_Blink[2][8] = {
-  { B00000000, B00000000, B00000000, B00000111, B00001111, B00111111, B11100000, B00000000 },
-  { B00000000, B00000000, B00000000, B11000000, B11100000, B11111111, B00000000, B00000000 }
+
+// X_X animation
+// // X
+// byte Eye_Normal[2][8] = {
+//   { B11000011, B11100111, B01111110, B00111100, B00111100, B01111110, B11100111, B11000011 },
+//   { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },
+// };
+
+// byte Eye_Blink[2][8] = {
+//   { B00000000, B00000000, B00000000, B00111100, B00111100, B00000000, B00000000, B00000000 },
+//   { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },
+// };
+
+// // Flat mouth
+// byte Mouth_Normal[4][8] = {
+//   { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },
+//   { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },
+//   { B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B11111111, B00000000 },
+//   { B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B11111111, B00000000 },
+// };
+
+
+
+// // UWU Animation
+// byte Mouth_Normal[4][8] = {
+//   { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },
+//   { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 },
+//   { B00000000, B10000001, B10000001, B10000001, B01011010, B01011010, B00111100, B00000000 },
+//   { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 },
+// };
+
+
+
+// Proto OS mouth (left)
+// byte Mouth_Normal[4][8] = {
+//   { B00000000, B00000000, B00000000, B00000001, B00000111, B00011110, B01111000, B11100000 },
+//   { B00000000, B00000000, B00000000, B00000000, B11100000, B01111000, B00011110, B00000111 },
+//   { B00000000, B00000000, B00000000, B00000111, B00011111, B01111000, B11100000, B10000000 },
+//   { B00001000, B00011110, B01111011, B11100011, B11111111, B00000000, B00000000, B00000000 },
+// };
+
+
+byte Numbers_ASCII[10][8] = {
+  { B00000000, B00111100, B01100110, B01101110, B01110110, B01100110, B01100110, B00111100 },
+  { B00000000, B00011000, B00011000, B00111000, B00011000, B00011000, B00011000, B01111110 },
+  { B00000000, B00111100, B01100110, B00000110, B00001100, B00110000, B01100000, B01111110 },
+  { B00000000, B00111100, B01100110, B00000110, B00011100, B00000110, B01100110, B00111100 },
+  { B00000000, B00001100, B00011100, B00101100, B01001100, B01111110, B00001100, B00001100 },
+  { B00000000, B01111110, B01100000, B01111100, B00000110, B00000110, B01100110, B00111100 },
+  { B00000000, B00111100, B01100110, B01100000, B01111100, B01100110, B01100110, B00111100 },
+  { B00000000, B01111110, B01100110, B00001100, B00001100, B00011000, B00011000, B00011000 },
+  { B00000000, B00111100, B01100110, B01100110, B00111100, B01100110, B01100110, B00111100 },
+  { B00000000, B00111100, B01100110, B01100110, B00111110, B00000110, B01100110, B00111100 },
 };
 
 
 
 
-void setup() {
-  pinMode(CS, OUTPUT);
 
-  for (int address = 0; address < numPanels; address++) {
-    lc.shutdown(address, false);   // Disable power saving
-    lc.setIntensity(address, 15);  // Set brightness 0-15
-    lc.clearDisplay(address);      // Turn all LEDs off
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(PIN_LEFT_CS, OUTPUT);
+  pinMode(PIN_RIGHT_CS, OUTPUT);
+
+  for (int address = 0; address < LEFT_NUM_PANELS; address++) {
+    LEFT_LEDs.shutdown(address, false);           // Disable power saving
+    LEFT_LEDs.setIntensity(address, Brightness);  // Set brightness 0-15
+    LEFT_LEDs.clearDisplay(address);              // Turn all LEDs off
+  }
+
+  for (int address = 0; address < RIGHT_NUM_PANELS; address++) {
+    RIGHT_LEDs.shutdown(address, false);           // Disable power saving
+    RIGHT_LEDs.setIntensity(address, Brightness);  // Set brightness 0-15
+    RIGHT_LEDs.clearDisplay(address);              // Turn all LEDs off
   }
 }
 
@@ -72,32 +146,55 @@ int MinBlinkDuration = 5000;
 unsigned long NextBlink = millis() + random(3000) + MinBlinkDuration;
 int BlinkDurationMs = 50;
 
+unsigned long NextTempReading = millis() + 500;
+
+
+unsigned long NextDistanceReading = millis() + 200;
 
 void loop() {
   unsigned long curTime = millis();
 
+  if (curTime >= NextDistanceReading) {
+    NextDistanceReading = curTime + 200;
+
+    Serial.println(getDistance());
+  }
+
+
+
+  // Temperature test
+  if (curTime >= NextTempReading) {
+    float temperature = getTemperature();
+    int digitOneIndex = temperature / 10;
+    int digitTwoIndex = (int)temperature % 10;
+    renderPanel(RIGHT_LEDs, 0, Numbers_ASCII[digitTwoIndex], false, false, 0, 0);
+    renderPanel(RIGHT_LEDs, 1, Numbers_ASCII[digitOneIndex], false, false, 0, 0);
+
+    NextTempReading = millis() + 500;
+  }
+
 
   // Mouth
-  renderPanel(PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, Face_OffsetX, Face_OffsetY);
-  renderPanel(PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false, Face_OffsetX, Face_OffsetY);
-  renderPanel(PANEL_MOUTH_LEFT_3, Mouth_Normal[2], false, Face_OffsetX, Face_OffsetY);
-  renderPanel(PANEL_MOUTH_LEFT_4, Mouth_Normal[3], false, Face_OffsetX, Face_OffsetY);
+  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, false, Face_OffsetX, Face_OffsetY);
+  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false, false, Face_OffsetX, Face_OffsetY);
+  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_3, Mouth_Normal[2], false, false, Face_OffsetX, Face_OffsetY);
+  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_4, Mouth_Normal[3], false, false, Face_OffsetX, Face_OffsetY);
 
 
   // Nose
   // Reversed rows & columns (the panel is rotated 180 degrees currently)
+  renderPanel(LEFT_LEDs, PANEL_NOSE_LEFT, Nose_Normal[0], true, false, 0, 0);
 
-  renderPanel(PANEL_NOSE_LEFT, Nose_Normal[0], true, 0, 0);
 
   // Eyes
   if (curTime < NextBlink) {
     // Reversed rows & columns (the panel is rotated 180 degrees currently)
-    renderPanel(PANEL_EYE_LEFT_1, Eye_Normal[0], true, Face_OffsetX, Face_OffsetY);
-    renderPanel(PANEL_EYE_LEFT_2, Eye_Normal[1], true, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_1, Eye_Normal[0], true, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_2, Eye_Normal[1], true, false, Face_OffsetX, Face_OffsetY);
   } else {
     // Reversed rows & columns (the panel is rotated 180 degrees currently)
-    renderPanel(PANEL_EYE_LEFT_1, Eye_Blink[0], true, Face_OffsetX, Face_OffsetY);
-    renderPanel(PANEL_EYE_LEFT_2, Eye_Blink[1], true, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_1, Eye_Blink[0], true, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_2, Eye_Blink[1], true, false, Face_OffsetX, Face_OffsetY);
 
     if (curTime >= NextBlink + BlinkDurationMs) {
       NextBlink = millis() + random(3000) + MinBlinkDuration;
@@ -123,11 +220,15 @@ void loop() {
 
 
 
-void renderPanel(int panelIndex, byte data[], bool isReversed, int offsetX, int offsetY) {
+void renderPanel(LedControl faceLEDs, int panelIndex, byte data[], bool isReversed, bool flipRowsAndColumns, int offsetX, int offsetY) {
   for (int row = 0; row < 8; row++) {
     int rowIndex = row + offsetY;
     if (rowIndex < 0 || rowIndex >= 8) {
-      lc.setRow(panelIndex, row, 0);
+      if (flipRowsAndColumns == false) {
+        faceLEDs.setRow(panelIndex, row, 0);
+      } else {
+        faceLEDs.setColumn(panelIndex, row, 0);
+      }
       continue;
     }
 
@@ -138,7 +239,11 @@ void renderPanel(int panelIndex, byte data[], bool isReversed, int offsetX, int 
       columnData = data[rowIndex] << offsetX;
     }
 
-    lc.setRow(panelIndex, row, columnData);
+    if (flipRowsAndColumns == false) {
+      faceLEDs.setRow(panelIndex, row, columnData);
+    } else {
+      faceLEDs.setColumn(panelIndex, row, columnData);
+    }
   }
 }
 
@@ -154,4 +259,8 @@ byte reverse(byte b) {
 float getTemperature() {
   float voltage = analogRead(TemperatureAnalogPin) * 0.004882814;
   return (voltage - 0.5) * 100;
+}
+
+float getDistance() {
+  return analogRead(DistanceAnalogPin);
 }
