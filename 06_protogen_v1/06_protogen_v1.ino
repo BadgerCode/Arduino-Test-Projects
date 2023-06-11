@@ -143,8 +143,8 @@ int Face_OffsetY_Dir = 1;
 int OffsetDelay = 200;
 unsigned long NextOffsetShift = millis() + OffsetDelay;
 
-int MinBlinkDuration = 5000;
-unsigned long NextBlink = millis() + random(3000) + MinBlinkDuration;
+int MinBlinkWait = 5000;
+unsigned long NextBlink = millis() + random(3000) + MinBlinkWait;
 int BlinkDurationMs = 50;
 
 unsigned long NextTempReading = millis() + 500;
@@ -201,7 +201,7 @@ void loop() {
     renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_2, Eye_Blink[1], true, false, Face_OffsetX, Face_OffsetY);
 
     if (curTime >= NextBlink + BlinkDurationMs) {
-      NextBlink = millis() + random(3000) + MinBlinkDuration;
+      NextBlink = millis() + random(3000) + MinBlinkWait;
     }
   }
 
