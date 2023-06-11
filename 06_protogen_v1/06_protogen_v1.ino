@@ -17,7 +17,7 @@ LedControl LEFT_LEDs = LedControl(PIN_LEFT_DIN, PIN_LEFT_CLK, PIN_LEFT_CS, LEFT_
 int PIN_RIGHT_DIN = 7;
 int PIN_RIGHT_CS = 6;
 int PIN_RIGHT_CLK = 5;
-int RIGHT_NUM_PANELS = 2;
+int RIGHT_NUM_PANELS = 4;
 LedControl RIGHT_LEDs = LedControl(PIN_RIGHT_DIN, PIN_RIGHT_CLK, PIN_RIGHT_CS, RIGHT_NUM_PANELS);
 
 
@@ -81,12 +81,12 @@ byte Mouth_Normal[4][8] = {
 
 
 // // UWU Animation
-// byte Mouth_Normal[4][8] = {
-//   { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },
-//   { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 },
-//   { B00000000, B10000001, B10000001, B10000001, B01011010, B01011010, B00111100, B00000000 },
-//   { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 },
-// };
+byte Mouth_UWU[4][8] = {
+  { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },
+  { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 },
+  { B00000000, B10000001, B10000001, B10000001, B01011010, B01011010, B00111100, B00000000 },
+  { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 },
+};
 
 
 
@@ -117,7 +117,8 @@ byte Numbers_ASCII[10][8] = {
 
 
 void setup() {
-  Serial.begin(9600);
+  // Serial.begin(9600); // Enable serial port
+  // used for things like Serial.println("blah blah");
 
   pinMode(PIN_LEFT_CS, OUTPUT);
   pinMode(PIN_RIGHT_CS, OUTPUT);
@@ -154,14 +155,6 @@ unsigned long NextDistanceReading = millis() + 200;
 void loop() {
   unsigned long curTime = millis();
 
-  if (curTime >= NextDistanceReading) {
-    NextDistanceReading = curTime + 200;
-
-    Serial.println(getDistance());
-  }
-
-
-
   // Temperature test
   if (curTime >= NextTempReading) {
     float temperature = getTemperature();
@@ -174,11 +167,22 @@ void loop() {
   }
 
 
+  // Touch sensor
+  int distance = getDistance();
+
   // Mouth
-  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, false, Face_OffsetX, Face_OffsetY);
-  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false, false, Face_OffsetX, Face_OffsetY);
-  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_3, Mouth_Normal[2], false, false, Face_OffsetX, Face_OffsetY);
-  renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_4, Mouth_Normal[3], false, false, Face_OffsetX, Face_OffsetY);
+  if (distance < 300) {
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_3, Mouth_Normal[2], false, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_4, Mouth_Normal[3], false, false, Face_OffsetX, Face_OffsetY);
+  }
+  else {
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_1, Mouth_UWU[0], false, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_2, Mouth_UWU[1], false, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_3, Mouth_UWU[2], false, false, Face_OffsetX, Face_OffsetY);
+    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_4, Mouth_UWU[3], false, false, Face_OffsetX, Face_OffsetY);
+  }
 
 
   // Nose
@@ -261,6 +265,6 @@ float getTemperature() {
   return (voltage - 0.5) * 100;
 }
 
-float getDistance() {
+int getDistance() {
   return analogRead(DistanceAnalogPin);
 }
