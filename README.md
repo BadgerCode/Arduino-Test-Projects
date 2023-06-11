@@ -18,3 +18,7 @@
 * One block daisy chained to the first
 * Separate USB power supply for matrices
 * Make sure ground of USB is connected to ground of arduino too
+
+# 6 Protogen v1
+* Designs
+    * https://xantorohara.github.io/led-matrix-editor/#077ffffefcf0c000|0000ff7f3f1f0700|0000000000000000|00c0f88c01000000|0001e7ff04000000|0000030f3ee00000|01031e0000000000|0007fcf0e0000000|0000ff0703000000

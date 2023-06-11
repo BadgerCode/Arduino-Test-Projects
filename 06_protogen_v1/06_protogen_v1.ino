@@ -1,5 +1,10 @@
 #include "LedControl.h"
 
+
+int TemperatureAnalogPin = 0;
+
+
+
 int DIN = 11;
 int CS = 3;
 int CLK = 13;
@@ -67,8 +72,10 @@ int MinBlinkDuration = 5000;
 unsigned long NextBlink = millis() + random(3000) + MinBlinkDuration;
 int BlinkDurationMs = 50;
 
+
 void loop() {
   unsigned long curTime = millis();
+
 
   // Mouth
   renderPanel(PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, Face_OffsetX, Face_OffsetY);
@@ -140,4 +147,11 @@ byte reverse(byte b) {
   b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
   b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
   return b;
+}
+
+
+/// Returns a two decimal number for the temperature in celcius
+float getTemperature() {
+  float voltage = analogRead(TemperatureAnalogPin) * 0.004882814;
+  return (voltage - 0.5) * 100;
 }
