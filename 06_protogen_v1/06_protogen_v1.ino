@@ -19,7 +19,11 @@ int PANEL_EYE_LEFT_2 = 7;
 
 
 
-byte Nose_Normal[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B01111000, B11000000, B10000000 };
+
+
+byte Nose_Normal[1][8] = {
+  { B00000000, B00000000, B00000000, B00000000, B00000000, B01111000, B11000000, B10000000 }
+};
 
 byte Eye_Normal[2][8] = {
   { B00000000, B00000011, B00001111, B00111111, B01111111, B11111111, B11111110, B11100000 },
@@ -33,6 +37,11 @@ byte Mouth_Normal[4][8] = {
   { B00000000, B00000000, B00000111, B01111100, B11110000, B11000000, B00000000, B00000000 }
 };
 
+
+byte Eye_Blink[2][8] = {
+  { B00000000, B00000000, B00000000, B00000111, B00001111, B00111111, B11100000, B00000000 },
+  { B00000000, B00000000, B00000000, B11000000, B11100000, B11111111, B00000000, B00000000 }
+};
 
 
 
@@ -48,13 +57,19 @@ void setup() {
 }
 
 
-int Face_OffsetX = 0; // OffsetX doesn't work, because the LEDs from one panel don't wrap to the next panel
+int Face_OffsetX = 0;  // OffsetX doesn't work, because the LEDs from one panel don't wrap to the next panel
 int Face_OffsetY = 0;
 int Face_OffsetY_Dir = 1;
 int OffsetDelay = 200;
 unsigned long NextOffsetShift = millis() + OffsetDelay;
 
+int MinBlinkDuration = 5000;
+unsigned long NextBlink = millis() + random(3000) + MinBlinkDuration;
+int BlinkDurationMs = 50;
+
 void loop() {
+  unsigned long curTime = millis();
+
   // Mouth
   renderPanel(PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, Face_OffsetX, Face_OffsetY);
   renderPanel(PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false, Face_OffsetX, Face_OffsetY);
@@ -64,16 +79,26 @@ void loop() {
 
   // Nose
   // Reversed rows & columns (the panel is rotated 180 degrees currently)
-  renderPanel(PANEL_NOSE_LEFT, Nose_Normal, true, 0, 0);
+
+  renderPanel(PANEL_NOSE_LEFT, Nose_Normal[0], true, 0, 0);
 
   // Eyes
-  // Reversed rows & columns (the panel is rotated 180 degrees currently)
-  renderPanel(PANEL_EYE_LEFT_1, Eye_Normal[0], true, Face_OffsetX, Face_OffsetY);
-  renderPanel(PANEL_EYE_LEFT_2, Eye_Normal[1], true, Face_OffsetX, Face_OffsetY);
+  if (curTime < NextBlink) {
+    // Reversed rows & columns (the panel is rotated 180 degrees currently)
+    renderPanel(PANEL_EYE_LEFT_1, Eye_Normal[0], true, Face_OffsetX, Face_OffsetY);
+    renderPanel(PANEL_EYE_LEFT_2, Eye_Normal[1], true, Face_OffsetX, Face_OffsetY);
+  } else {
+    // Reversed rows & columns (the panel is rotated 180 degrees currently)
+    renderPanel(PANEL_EYE_LEFT_1, Eye_Blink[0], true, Face_OffsetX, Face_OffsetY);
+    renderPanel(PANEL_EYE_LEFT_2, Eye_Blink[1], true, Face_OffsetX, Face_OffsetY);
+
+    if (curTime >= NextBlink + BlinkDurationMs) {
+      NextBlink = millis() + random(3000) + MinBlinkDuration;
+    }
+  }
 
 
   // Offset the face to do a basic animation
-  unsigned long curTime = millis();
   if (curTime >= NextOffsetShift) {
     NextOffsetShift = curTime + OffsetDelay;
 
