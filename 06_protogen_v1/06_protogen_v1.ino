@@ -160,25 +160,8 @@ int MinBlinkWait = 5000;
 unsigned long NextBlink = millis() + random(3000) + MinBlinkWait;
 int BlinkDurationMs = 50;
 
-unsigned long NextTempReading = millis() + 500;
-
-
-unsigned long NextDistanceReading = millis() + 200;
-
 void loop() {
   unsigned long curTime = millis();
-
-  // Temperature test
-  // if (curTime >= NextTempReading) {
-  //   float temperature = getTemperature();
-  //   int digitOneIndex = temperature / 10;
-  //   int digitTwoIndex = (int)temperature % 10;
-  //   renderPanel(RIGHT_LEDs, 0, Numbers_ASCII[digitTwoIndex], false, 0, 0);
-  //   renderPanel(RIGHT_LEDs, 1, Numbers_ASCII[digitOneIndex], false, 0, 0);
-
-  //   NextTempReading = millis() + 500;
-  // }
-
 
   // Touch sensor
   int distance = getDistance();
@@ -248,15 +231,15 @@ void renderPanel(LedControl faceLEDs, int panelIndex, byte data[], bool isRevers
       continue;
     }
 
-    byte columnData = 0;
-    int columnDataIndex = isUpsideDown ? (7 - rowIndex) : rowIndex;
+    byte rowData = 0;
+    int rowDataIndex = isUpsideDown ? (7 - rowIndex) : rowIndex;
     if (isReversed) {
-      columnData = reverse(data[columnDataIndex] << offsetX);
+      rowData = reverse(data[rowDataIndex] << offsetX);
     } else {
-      columnData = data[columnDataIndex] << offsetX;
+      rowData = data[rowDataIndex] << offsetX;
     }
 
-    faceLEDs.setRow(panelIndex, row, columnData);
+    faceLEDs.setRow(panelIndex, row, rowData);
   }
 }
 
