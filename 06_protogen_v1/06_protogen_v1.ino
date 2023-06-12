@@ -7,28 +7,41 @@ int DistanceAnalogPin = 1;
 int Brightness = 6;  // 0 - 15
 
 
+// Left face
 int PIN_LEFT_DIN = 11;
 int PIN_LEFT_CS = 3;
 int PIN_LEFT_CLK = 13;
-int LEFT_NUM_PANELS = 8;
+int LEFT_NUM_PANELS = 7;
+
+int PANEL_MOUTH1_LEFT = 3;
+int PANEL_MOUTH2_LEFT = 2;
+int PANEL_MOUTH3_LEFT = 1;
+int PANEL_MOUTH4_LEFT = 0;
+int PANEL_NOSE_LEFT = 4;
+int PANEL_EYE_LEFT_1 = 5;
+int PANEL_EYE_LEFT_2 = 6;
+
 LedControl LEFT_LEDs = LedControl(PIN_LEFT_DIN, PIN_LEFT_CLK, PIN_LEFT_CS, LEFT_NUM_PANELS);
 
 
+
+
+// Right face
 int PIN_RIGHT_DIN = 7;
 int PIN_RIGHT_CS = 6;
 int PIN_RIGHT_CLK = 5;
-int RIGHT_NUM_PANELS = 4;
+int RIGHT_NUM_PANELS = 7;
+
+int PANEL_MOUTH1_RIGHT = 3;
+int PANEL_MOUTH2_RIGHT = 2;
+int PANEL_MOUTH3_RIGHT = 1;
+int PANEL_MOUTH4_RIGHT = 0;
+int PANEL_NOSE_RIGHT = 4;
+int PANEL_EYE_RIGHT_1 = 5;
+int PANEL_EYE_RIGHT_2 = 6;
+
 LedControl RIGHT_LEDs = LedControl(PIN_RIGHT_DIN, PIN_RIGHT_CLK, PIN_RIGHT_CS, RIGHT_NUM_PANELS);
 
-
-
-int PANEL_MOUTH_LEFT_1 = 3;
-int PANEL_MOUTH_LEFT_2 = 2;
-int PANEL_MOUTH_LEFT_3 = 1;
-int PANEL_MOUTH_LEFT_4 = 0;
-int PANEL_NOSE_LEFT = 4;
-int PANEL_EYE_LEFT_1 = 6;
-int PANEL_EYE_LEFT_2 = 7;
 
 
 
@@ -36,7 +49,7 @@ int PANEL_EYE_LEFT_2 = 7;
 
 // Neutral animation
 byte Nose_Normal[1][8] = {
-  { B00000000, B00000000, B00000000, B00000000, B00000000, B01111000, B11000000, B10000000 }
+  { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }
 };
 
 byte Eye_Normal[2][8] = {
@@ -156,15 +169,15 @@ void loop() {
   unsigned long curTime = millis();
 
   // Temperature test
-  if (curTime >= NextTempReading) {
-    float temperature = getTemperature();
-    int digitOneIndex = temperature / 10;
-    int digitTwoIndex = (int)temperature % 10;
-    renderPanel(RIGHT_LEDs, 0, Numbers_ASCII[digitTwoIndex], false, false, 0, 0);
-    renderPanel(RIGHT_LEDs, 1, Numbers_ASCII[digitOneIndex], false, false, 0, 0);
+  // if (curTime >= NextTempReading) {
+  //   float temperature = getTemperature();
+  //   int digitOneIndex = temperature / 10;
+  //   int digitTwoIndex = (int)temperature % 10;
+  //   renderPanel(RIGHT_LEDs, 0, Numbers_ASCII[digitTwoIndex], false, 0, 0);
+  //   renderPanel(RIGHT_LEDs, 1, Numbers_ASCII[digitOneIndex], false, 0, 0);
 
-    NextTempReading = millis() + 500;
-  }
+  //   NextTempReading = millis() + 500;
+  // }
 
 
   // Touch sensor
@@ -172,33 +185,32 @@ void loop() {
 
   // Mouth
   if (distance < 300) {
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_1, Mouth_Normal[0], false, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_2, Mouth_Normal[1], false, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_3, Mouth_Normal[2], false, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_4, Mouth_Normal[3], false, false, Face_OffsetX, Face_OffsetY);
-  }
-  else {
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_1, Mouth_UWU[0], false, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_2, Mouth_UWU[1], false, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_3, Mouth_UWU[2], false, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_MOUTH_LEFT_4, Mouth_UWU[3], false, false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_MOUTH1_LEFT, PANEL_MOUTH1_RIGHT, Mouth_Normal[0], false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_MOUTH2_LEFT, PANEL_MOUTH2_RIGHT, Mouth_Normal[1], false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_MOUTH3_LEFT, PANEL_MOUTH3_RIGHT, Mouth_Normal[2], false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_MOUTH4_LEFT, PANEL_MOUTH4_RIGHT, Mouth_Normal[3], false, Face_OffsetX, Face_OffsetY);
+  } else {
+    renderLeftAndRightPanel(PANEL_MOUTH1_LEFT, PANEL_MOUTH1_RIGHT, Mouth_UWU[0], false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_MOUTH2_LEFT, PANEL_MOUTH2_RIGHT, Mouth_UWU[1], false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_MOUTH3_LEFT, PANEL_MOUTH3_RIGHT, Mouth_UWU[2], false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_MOUTH4_LEFT, PANEL_MOUTH4_RIGHT, Mouth_UWU[3], false, Face_OffsetX, Face_OffsetY);
   }
 
 
   // Nose
   // Reversed rows & columns (the panel is rotated 180 degrees currently)
-  renderPanel(LEFT_LEDs, PANEL_NOSE_LEFT, Nose_Normal[0], true, false, 0, 0);
+  renderLeftAndRightPanel(PANEL_NOSE_LEFT, PANEL_NOSE_RIGHT, Nose_Normal[0], false, 0, 0);
 
 
   // Eyes
   if (curTime < NextBlink) {
     // Reversed rows & columns (the panel is rotated 180 degrees currently)
-    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_1, Eye_Normal[0], true, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_2, Eye_Normal[1], true, false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_EYE_LEFT_1, PANEL_EYE_RIGHT_1, Eye_Normal[0], true, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_EYE_LEFT_2, PANEL_EYE_RIGHT_2, Eye_Normal[1], true, Face_OffsetX, Face_OffsetY);
   } else {
     // Reversed rows & columns (the panel is rotated 180 degrees currently)
-    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_1, Eye_Blink[0], true, false, Face_OffsetX, Face_OffsetY);
-    renderPanel(LEFT_LEDs, PANEL_EYE_LEFT_2, Eye_Blink[1], true, false, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_EYE_LEFT_1, PANEL_EYE_RIGHT_1, Eye_Blink[0], true, Face_OffsetX, Face_OffsetY);
+    renderLeftAndRightPanel(PANEL_EYE_LEFT_2, PANEL_EYE_RIGHT_2, Eye_Blink[1], true, Face_OffsetX, Face_OffsetY);
 
     if (curTime >= NextBlink + BlinkDurationMs) {
       NextBlink = millis() + random(3000) + MinBlinkWait;
@@ -222,32 +234,29 @@ void loop() {
 
 
 
+void renderLeftAndRightPanel(int leftPanelIndex, int rightPanelIndex, byte data[], bool isReversed, int offsetX, int offsetY) {
+  renderPanel(LEFT_LEDs, leftPanelIndex, data, isReversed, isReversed, offsetX, offsetY);
+  renderPanel(RIGHT_LEDs, rightPanelIndex, data, isReversed, !isReversed, offsetX, offsetY * -1);
+}
 
 
-void renderPanel(LedControl faceLEDs, int panelIndex, byte data[], bool isReversed, bool flipRowsAndColumns, int offsetX, int offsetY) {
+void renderPanel(LedControl faceLEDs, int panelIndex, byte data[], bool isReversed, bool isUpsideDown, int offsetX, int offsetY) {
   for (int row = 0; row < 8; row++) {
     int rowIndex = row + offsetY;
     if (rowIndex < 0 || rowIndex >= 8) {
-      if (flipRowsAndColumns == false) {
-        faceLEDs.setRow(panelIndex, row, 0);
-      } else {
-        faceLEDs.setColumn(panelIndex, row, 0);
-      }
+      faceLEDs.setRow(panelIndex, row, 0);
       continue;
     }
 
     byte columnData = 0;
+    int columnDataIndex = isUpsideDown ? (7 - rowIndex) : rowIndex;
     if (isReversed) {
-      columnData = reverse(data[7 - rowIndex] << offsetX);
+      columnData = reverse(data[columnDataIndex] << offsetX);
     } else {
-      columnData = data[rowIndex] << offsetX;
+      columnData = data[columnDataIndex] << offsetX;
     }
 
-    if (flipRowsAndColumns == false) {
-      faceLEDs.setRow(panelIndex, row, columnData);
-    } else {
-      faceLEDs.setColumn(panelIndex, row, columnData);
-    }
+    faceLEDs.setRow(panelIndex, row, columnData);
   }
 }
 
