@@ -99,6 +99,7 @@ struct FaceExpression Face_X_X = {
 };
 
 
+
 // Override expression
 struct FaceExpression Face_UWU = {
   .Nose = {
@@ -121,15 +122,6 @@ struct FaceExpression Face_UWU = {
 };
 
 
-
-
-// Proto OS mouth (left)
-// byte Mouth_Normal[4][8] = {
-//   { B00000000, B00000000, B00000000, B00000001, B00000111, B00011110, B01111000, B11100000 },
-//   { B00000000, B00000000, B00000000, B00000000, B11100000, B01111000, B00011110, B00000111 },
-//   { B00000000, B00000000, B00000000, B00000111, B00011111, B01111000, B11100000, B10000000 },
-//   { B00001000, B00011110, B01111011, B11100011, B11111111, B00000000, B00000000, B00000000 },
-// };
 
 
 byte Numbers_ASCII[10][8] = {
@@ -218,7 +210,7 @@ void loop() {
   if (buttonHasBeenPressed && ButtonIsDown == false) {
     // Button has just been pressed this tick
     CurrentExpression = CurrentExpression + 1;
-    if(CurrentExpression == END) {
+    if (CurrentExpression == END) {
       CurrentExpression = START + 1;
     }
   }
