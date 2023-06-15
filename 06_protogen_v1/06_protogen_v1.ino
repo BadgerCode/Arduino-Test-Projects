@@ -2,16 +2,16 @@
 
 
 int ButtonPin = 0;
-int TemperatureAnalogPin = 0;
-int DistanceAnalogPin = 1;
+int TemperatureAnalogPin = 1;
+int DistanceAnalogPin = 0;
 
 int Brightness = 6;  // 0 - 15
 
 
 // Left face
-int PIN_LEFT_DIN = 11;
-int PIN_LEFT_CS = 3;
-int PIN_LEFT_CLK = 13;
+int PIN_LEFT_DIN = 1;
+int PIN_LEFT_CS = 2;
+int PIN_LEFT_CLK = 3;
 int LEFT_NUM_PANELS = 7;
 
 LedControl LEFT_LEDs = LedControl(PIN_LEFT_DIN, PIN_LEFT_CLK, PIN_LEFT_CS, LEFT_NUM_PANELS);
@@ -19,9 +19,9 @@ LedControl LEFT_LEDs = LedControl(PIN_LEFT_DIN, PIN_LEFT_CLK, PIN_LEFT_CS, LEFT_
 
 
 // Right face
-int PIN_RIGHT_DIN = 7;
-int PIN_RIGHT_CS = 6;
-int PIN_RIGHT_CLK = 5;
+int PIN_RIGHT_DIN = 4;
+int PIN_RIGHT_CS = 5;
+int PIN_RIGHT_CLK = 6;
 int RIGHT_NUM_PANELS = 7;
 
 LedControl RIGHT_LEDs = LedControl(PIN_RIGHT_DIN, PIN_RIGHT_CLK, PIN_RIGHT_CS, RIGHT_NUM_PANELS);
