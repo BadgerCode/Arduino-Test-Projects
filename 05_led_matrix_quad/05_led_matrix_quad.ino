@@ -1,9 +1,9 @@
 #include "LedControl.h"
 
-int DIN = 11;
-int CS = 3;
-int CLK = 13;
-int numPanels = 8;
+int DIN = 1;
+int CS = 2;
+int CLK = 3;
+int numPanels = 7;
 
 LedControl lc = LedControl(DIN, CLK, CS, numPanels);
 
