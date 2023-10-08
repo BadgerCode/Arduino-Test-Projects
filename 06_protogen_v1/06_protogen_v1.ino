@@ -248,7 +248,7 @@ void loop() {
   renderLeftAndRightPanel(PANEL_MOUTH4, (*facialExpression).Mouth[3], false, Face_OffsetX, Face_OffsetY);
 
   // Nose
-  renderLeftAndRightPanel(PANEL_NOSE, (*facialExpression).Nose[0], false, 0, 0);
+  renderLeftAndRightPanel(PANEL_NOSE, (*facialExpression).Nose[0], true, 0, 0);
 
 
   // Eyes
