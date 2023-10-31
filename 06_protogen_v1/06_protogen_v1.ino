@@ -9,9 +9,9 @@ int Brightness = 6;  // 0 - 15
 
 
 // Left face
-int PIN_LEFT_DIN = 1;
-int PIN_LEFT_CS = 2;
-int PIN_LEFT_CLK = 3;
+int PIN_LEFT_DIN = 3;
+int PIN_LEFT_CS = 4;
+int PIN_LEFT_CLK = 5;
 int LEFT_NUM_PANELS = 7;
 
 LedControl LEFT_LEDs = LedControl(PIN_LEFT_DIN, PIN_LEFT_CLK, PIN_LEFT_CS, LEFT_NUM_PANELS);
@@ -19,9 +19,9 @@ LedControl LEFT_LEDs = LedControl(PIN_LEFT_DIN, PIN_LEFT_CLK, PIN_LEFT_CS, LEFT_
 
 
 // Right face
-int PIN_RIGHT_DIN = 4;
-int PIN_RIGHT_CS = 5;
-int PIN_RIGHT_CLK = 6;
+int PIN_RIGHT_DIN = 6;
+int PIN_RIGHT_CS = 7;
+int PIN_RIGHT_CLK = 8;
 int RIGHT_NUM_PANELS = 7;
 
 LedControl RIGHT_LEDs = LedControl(PIN_RIGHT_DIN, PIN_RIGHT_CLK, PIN_RIGHT_CS, RIGHT_NUM_PANELS);
@@ -145,7 +145,7 @@ void setup() {
   // Serial.begin(9600);  // Enable serial port
   // used for things like Serial.println("blah blah");
 
-  pinMode(ButtonPin, INPUT);
+  // //pinMode(ButtonPin, INPUT);
   pinMode(PIN_LEFT_CS, OUTPUT);
   pinMode(PIN_RIGHT_CS, OUTPUT);
 
@@ -169,7 +169,7 @@ enum Expression CurrentExpression = Neutral;
 int Face_OffsetX = 0;  // OffsetX doesn't work, because the LEDs from one panel don't wrap to the next panel
 int Face_OffsetY = 0;
 int Face_OffsetY_Dir = 1;
-int OffsetDelay = 200;
+int OffsetDelay = 170;
 unsigned long NextOffsetShift = millis() + OffsetDelay;
 
 int MinBlinkWait = 2000;
@@ -205,21 +205,21 @@ void loop() {
     }
   }
 
-  // Check button to change expression
-  bool buttonHasBeenPressed = isButtonDown();
-  if (buttonHasBeenPressed && ButtonIsDown == false) {
-    // Button has just been pressed this tick
-    CurrentExpression = CurrentExpression + 1;
-    if (CurrentExpression == END) {
-      CurrentExpression = START + 1;
-    }
-  }
-  ButtonIsDown = buttonHasBeenPressed;
+//   // Check button to change expression
+//   bool buttonHasBeenPressed = false;//isButtonDown();
+//   if (buttonHasBeenPressed && ButtonIsDown == false) {
+//     // Button has just been pressed this tick
+//     CurrentExpression = CurrentExpression + 1;
+//     if (CurrentExpression == END) {
+//       CurrentExpression = START + 1;
+//     }
+//   }
+//   ButtonIsDown = buttonHasBeenPressed;
 
 
-  // Touch sensor
-  int distance = getDistance();
-  bool touchNearby = (distance < 750);
+//   // Touch sensor
+//   int distance = 1000;//getDistance();
+//   bool touchNearby = (distance < 750);
 
 
   // Determine expression
@@ -235,10 +235,10 @@ void loop() {
       break;
   }
 
-  if (touchNearby) {
-    // Allow touch sensor to override expression
-    facialExpression = &Face_UWU;
-  }
+//   if (touchNearby) {
+//     // Allow touch sensor to override expression
+//     facialExpression = &Face_UWU;
+//   }
 
 
   // Mouth
@@ -260,12 +260,12 @@ void loop() {
 
 
 
-  // Debug print code
-  // Make sure to enable Serial.begin(9600); in setup
-  // if (curTime >= NextPrint) {
-  //   NextPrint = millis() + 20;
-  //   Serial.println((curTime >= NextBlink));
-  // }
+//   // Debug print code
+//   // Make sure to enable Serial.begin(9600); in setup
+//   // if (curTime >= NextPrint) {
+//   //   NextPrint = millis() + 20;
+//   //   Serial.println((curTime >= NextBlink));
+//   // }
 }
 
 
@@ -304,16 +304,16 @@ byte reverse(byte b) {
 }
 
 
-/// Returns a two decimal number for the temperature in celcius
-float getTemperature() {
-  float voltage = analogRead(TemperatureAnalogPin) * 0.004882814;
-  return (voltage - 0.5) * 100;
-}
+// /// Returns a two decimal number for the temperature in celcius
+// // float getTemperature() {
+// //   float voltage = analogRead(TemperatureAnalogPin) * 0.004882814;
+// //   return (voltage - 0.5) * 100;
+// // }
 
-int getDistance() {
-  return 1023 - analogRead(DistanceAnalogPin);  // Higher value = further away
-}
+// // int getDistance() {
+// //   return 1023 - analogRead(DistanceAnalogPin);  // Higher value = further away
+// // }
 
-bool isButtonDown() {
-  return digitalRead(ButtonPin) == 0;  // Invert it, so that it's 0 when off and 1 when on
-}
+// // bool isButtonDown() {
+// //   return digitalRead(ButtonPin) == 0;  // Invert it, so that it's 0 when off and 1 when on
+// // }
