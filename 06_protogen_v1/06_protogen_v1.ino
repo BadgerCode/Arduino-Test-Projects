@@ -49,14 +49,6 @@ struct FaceExpression {
 };
 
 
-// Expressions
-enum Expression {
-  START,
-  Neutral,
-  X_X,
-  END
-};
-
 // TODO: Reduce memory by re-using parts of other expressions
 struct FaceExpression Face_Neutral = {
   .Nose = {
@@ -83,18 +75,18 @@ struct FaceExpression Face_X_X = {
     { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
   },
   .Eye = {
-    { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },  //
-    { B11000011, B11100111, B01111110, B00111100, B00111100, B01111110, B11100111, B11000011 },  //
+    { B00000000, B00001100, B00000110, B00000011, B00000001, B00000011, B00000110, B00001100 },  //
+    { B00000000, B00110000, B01100000, B11000000, B10000000, B11000000, B01100000, B00110000 }   //
   },
   .Eye_Blink = {
-    { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },  //
-    { B00000000, B00000000, B00000000, B00111100, B00111100, B00000000, B00000000, B00000000 },  //
+    { B00000000, B00001100, B00000110, B00000011, B00000001, B00000011, B00000110, B00001100 },  //
+    { B00000000, B00110000, B01100000, B11000000, B10000000, B11000000, B01100000, B00110000 }   //
   },
   .Mouth = {
     { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },  //
-    { B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B11111111, B00000000 },  //
-    { B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B11111111, B00000000 },  //
-    { B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B11111111, B00000000 },  //
+    { B00000000, B00000000, B00000000, B00000000, B01110101, B00011111, B00000000, B00000000 },  //
+    { B00000000, B00000000, B00000000, B00000000, B11111111, B11100111, B00000000, B00000000 },  //
+    { B00000000, B00000000, B00000000, B00000000, B11110000, B11000000, B00000000, B00000000 }   //
   }
 };
 
@@ -119,6 +111,13 @@ struct FaceExpression Face_UWU = {
     { B00000000, B10000001, B10000001, B10000001, B01011010, B01011010, B00111100, B00000000 },  //
     { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 }   //
   }
+};
+
+
+const int NumSpecialFaces = 2;
+struct FaceExpression* SpecialExpressions[NumSpecialFaces] = {
+  &Face_UWU,
+  &Face_X_X
 };
 
 
@@ -162,25 +161,26 @@ void setup() {
   }
 }
 
-
-enum Expression CurrentExpression = Neutral;
-
-
+// Face movement
 int Face_OffsetX = 0;  // OffsetX doesn't work, because the LEDs from one panel don't wrap to the next panel
 int Face_OffsetY = 0;
 int Face_OffsetY_Dir = 1;
 int OffsetDelay = 170;
 unsigned long NextOffsetShift = millis() + OffsetDelay;
 
+// Blinking
 int MinBlinkWait = 2000;
 unsigned long NextBlink = millis() + random(100) + MinBlinkWait;
 int BlinkDurationMs = 100;
 
-bool ButtonIsDown = false;
-int ButtonCheckDelayMs = 10;
-unsigned long NextButtonCheck = millis() + ButtonCheckDelayMs;
+// Expression faces
+int Special_Face_Index = -1;
+int MinSpecialFaceWait = 6000;
+unsigned long NextSpecialFace = millis() + random(4000) + MinSpecialFaceWait;
+int SpecialFaceDurationMs = 3000;
 
 
+// Debug
 unsigned long NextPrint = millis() + 100;
 
 
@@ -190,6 +190,17 @@ void loop() {
   // Check if it's time to stop blinking
   if (curTime >= NextBlink + BlinkDurationMs) {
     NextBlink = millis() + random(100) + MinBlinkWait;
+  }
+
+  // Time for a special face?
+  if(curTime >= NextSpecialFace && Special_Face_Index == -1) {
+    Special_Face_Index = random(0, NumSpecialFaces);
+  }
+
+  // Time to return to the neutral face?
+  if (curTime >= NextSpecialFace + SpecialFaceDurationMs) {
+    NextSpecialFace = millis() + random(4000) + MinSpecialFaceWait;
+    Special_Face_Index = -1;
   }
 
   // Offset the face to do a basic animation
@@ -205,67 +216,50 @@ void loop() {
     }
   }
 
-//   // Check button to change expression
-//   bool buttonHasBeenPressed = false;//isButtonDown();
-//   if (buttonHasBeenPressed && ButtonIsDown == false) {
-//     // Button has just been pressed this tick
-//     CurrentExpression = CurrentExpression + 1;
-//     if (CurrentExpression == END) {
-//       CurrentExpression = START + 1;
-//     }
-//   }
-//   ButtonIsDown = buttonHasBeenPressed;
 
-
-//   // Touch sensor
-//   int distance = 1000;//getDistance();
-//   bool touchNearby = (distance < 750);
+  //   // Touch sensor
+  //   int distance = 1000;//getDistance();
+  //   bool touchNearby = (distance < 750);
 
 
   // Determine expression
-  struct FaceExpression* facialExpression = &Face_Neutral;
+  struct FaceExpression facialExpression = Face_Neutral;
 
-  switch (CurrentExpression) {
-    case X_X:
-      facialExpression = &Face_X_X;
-      break;
-    case Neutral:
-    default:
-      facialExpression = &Face_Neutral;
-      break;
+  if (Special_Face_Index != -1) {
+    facialExpression = *(SpecialExpressions[Special_Face_Index]);
   }
 
-//   if (touchNearby) {
-//     // Allow touch sensor to override expression
-//     facialExpression = &Face_UWU;
-//   }
+  //   if (touchNearby) {
+  //     // Allow touch sensor to override expression
+  //     facialExpression = &Face_UWU;
+  //   }
 
 
   // Mouth
-  renderLeftAndRightPanel(PANEL_MOUTH1, (*facialExpression).Mouth[0], false, Face_OffsetX, Face_OffsetY);
-  renderLeftAndRightPanel(PANEL_MOUTH2, (*facialExpression).Mouth[1], false, Face_OffsetX, Face_OffsetY);
-  renderLeftAndRightPanel(PANEL_MOUTH3, (*facialExpression).Mouth[2], false, Face_OffsetX, Face_OffsetY);
-  renderLeftAndRightPanel(PANEL_MOUTH4, (*facialExpression).Mouth[3], false, Face_OffsetX, Face_OffsetY);
+  renderLeftAndRightPanel(PANEL_MOUTH1, (facialExpression).Mouth[0], false, Face_OffsetX, Face_OffsetY);
+  renderLeftAndRightPanel(PANEL_MOUTH2, (facialExpression).Mouth[1], false, Face_OffsetX, Face_OffsetY);
+  renderLeftAndRightPanel(PANEL_MOUTH3, (facialExpression).Mouth[2], false, Face_OffsetX, Face_OffsetY);
+  renderLeftAndRightPanel(PANEL_MOUTH4, (facialExpression).Mouth[3], false, Face_OffsetX, Face_OffsetY);
 
   // Nose
-  renderLeftAndRightPanel(PANEL_NOSE, (*facialExpression).Nose[0], true, 0, 0);
+  renderLeftAndRightPanel(PANEL_NOSE, (facialExpression).Nose[0], true, 0, 0);
 
 
   // Eyes
   bool shouldBlink = (curTime >= NextBlink);
-  EyeFrame* eyes = shouldBlink ? &((*facialExpression).Eye_Blink) : &((*facialExpression).Eye);
+  EyeFrame* eyes = shouldBlink ? &((facialExpression).Eye_Blink) : &((facialExpression).Eye);
   renderLeftAndRightPanel(PANEL_EYE1, (*eyes)[0], true, Face_OffsetX, Face_OffsetY);
   renderLeftAndRightPanel(PANEL_EYE2, (*eyes)[1], true, Face_OffsetX, Face_OffsetY);
 
 
 
 
-//   // Debug print code
-//   // Make sure to enable Serial.begin(9600); in setup
-//   // if (curTime >= NextPrint) {
-//   //   NextPrint = millis() + 20;
-//   //   Serial.println((curTime >= NextBlink));
-//   // }
+  //   // Debug print code
+  //   // Make sure to enable Serial.begin(9600); in setup
+  //   // if (curTime >= NextPrint) {
+  //   //   NextPrint = millis() + 20;
+  //   //   Serial.println((curTime >= NextBlink));
+  //   // }
 }
 
 
