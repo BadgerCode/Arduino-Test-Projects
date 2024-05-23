@@ -217,8 +217,28 @@ struct FaceExpression Face_Angry = {
   }
 };
 
+struct FaceExpression Face_Surprised = {
+  .Nose = {
+    { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
+  },
+  .Eye = {
+    { B00000001, B00000011, B00000110, B00001100, B00001100, B00000110, B00000011, B00000001 },  //
+    { B10000000, B11000000, B01100000, B00110000, B00110000, B01100000, B11000000, B10000000 }   //
+  },
+  .Eye_Blink = {
+    { B00000001, B00000011, B00000110, B00001100, B00001100, B00000110, B00000011, B00000001 },  //
+    { B10000000, B11000000, B01100000, B00110000, B00110000, B01100000, B11000000, B10000000 }   //
+  },
+  .Mouth = {
+    { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 },  //
+    { B00000000, B00000000, B00000000, B00000000, B00000011, B01111111, B00000011, B00000000 },  //
+    { B00000000, B00000000, B00000000, B00000000, B11111111, B11100111, B10000000, B00000000 },  //
+    { B00000000, B00000000, B00000000, B00000000, B11110000, B11000000, B00000000, B00000000 }  //
+  }
+};
 
-const int NumSpecialFaces = 9;
+
+const int NumSpecialFaces = 10;
 struct FaceExpression* SpecialExpressions[NumSpecialFaces] = {
   &Face_UWU,
   &Face_X_X,
@@ -228,6 +248,7 @@ struct FaceExpression* SpecialExpressions[NumSpecialFaces] = {
   &Face_Bored,
   &Face_Neutral_Flat,
   &Face_AmongUs,
-  &Face_Angry
+  &Face_Angry,
+  &Face_Surprised
 };
 
