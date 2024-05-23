@@ -9,7 +9,6 @@ struct FaceExpression {
 };
 
 
-// TODO: Reduce memory by re-using parts of other expressions
 struct FaceExpression Face_Neutral = {
   .Nose = {
     { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
@@ -29,6 +28,7 @@ struct FaceExpression Face_Neutral = {
     { B00000000, B00000000, B00000111, B01111100, B11110000, B11000000, B00000000, B00000000 }   //
   }
 };
+
 
 struct FaceExpression Face_X_X = {
   .Nose = {
@@ -51,8 +51,6 @@ struct FaceExpression Face_X_X = {
 };
 
 
-
-// Override expression
 struct FaceExpression Face_UWU = {
   .Nose = {
     { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
@@ -72,6 +70,7 @@ struct FaceExpression Face_UWU = {
     { B00000000, B01100110, B01100110, B01100110, B01100110, B01111110, B01111110, B00000000 }   //
   }
 };
+
 
 struct FaceExpression Face_Happy_Closed_eyes = {
   .Nose = {
@@ -93,6 +92,7 @@ struct FaceExpression Face_Happy_Closed_eyes = {
   }
 };
 
+
 struct FaceExpression Face_OWO = {
   .Nose = {
     { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
@@ -112,6 +112,7 @@ struct FaceExpression Face_OWO = {
     { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
   }
 };
+
 
 struct FaceExpression Face_Heart = {
   .Nose = {
@@ -133,6 +134,7 @@ struct FaceExpression Face_Heart = {
   }
 };
 
+
 struct FaceExpression Face_Bored = {
   .Nose = {
     { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
@@ -152,6 +154,7 @@ struct FaceExpression Face_Bored = {
     { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
   }
 };
+
 
 struct FaceExpression Face_Neutral_Flat = {
   .Nose = {
@@ -174,7 +177,48 @@ struct FaceExpression Face_Neutral_Flat = {
 };
 
 
-const int NumSpecialFaces = 7;
+struct FaceExpression Face_AmongUs = {
+  .Nose = {
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 }  //
+  },
+  .Eye = {
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 },  //
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 }   //
+  },
+  .Eye_Blink = {
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 },  //
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 }   //
+  },
+  .Mouth = {
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 },  //
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 },  //
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 },  //
+    { B00000000, B00011100, B00110000, B00111100, B00111100, B00011100, B00010100, B00000000 }  //
+  }
+};
+
+struct FaceExpression Face_Angry = {
+  .Nose = {
+    { B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
+  },
+  .Eye = {
+    { B00000001, B00000011, B00000111, B00001111, B00011111, B00111111, B00111100, B00011000 },  //
+    { B00000000, B10000000, B10000000, B10000000, B10000000, B00000000, B00000000, B00000000 }   //
+  },
+  .Eye_Blink = {
+    { B00000001, B00000011, B00000111, B00001111, B00011111, B00111111, B00111100, B00011000 },  //
+    { B00000000, B10000000, B10000000, B10000000, B10000000, B00000000, B00000000, B00000000 }   //
+  },
+  .Mouth = {
+    { B11000000, B01100000, B00111000, B00001100, B00000110, B00000011, B00000001, B00000000 },  //
+    { B00000000, B00000001, B00000011, B00000110, B00001100, B00011000, B10110000, B11100000 },  //
+    { B00000000, B10000000, B11000000, B01100000, B00110000, B00010000, B00011000, B00001000 },  //
+    { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 }  //
+  }
+};
+
+
+const int NumSpecialFaces = 9;
 struct FaceExpression* SpecialExpressions[NumSpecialFaces] = {
   &Face_UWU,
   &Face_X_X,
@@ -182,6 +226,8 @@ struct FaceExpression* SpecialExpressions[NumSpecialFaces] = {
   &Face_OWO,
   &Face_Heart,
   &Face_Bored,
-  &Face_Neutral_Flat
+  &Face_Neutral_Flat,
+  &Face_AmongUs,
+  &Face_Angry
 };
 
