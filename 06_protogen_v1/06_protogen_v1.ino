@@ -44,8 +44,8 @@ int PANEL_EYE2 = 6;
 
 
 void setup() {
-  // Serial.begin(9600);  // Enable serial port
-  // used for things like Serial.println("blah blah");
+  // Debug output on serial port; Used for Serial.println("blah blah");
+  // Serial.begin(9600);
 
   // //pinMode(ButtonPin, INPUT);
   pinMode(PIN_LEFT_CS, OUTPUT);
@@ -129,9 +129,6 @@ void loop() {
   }
 
 
-  //   // Touch sensor
-  //   int distance = 1000;//getDistance();
-  //   bool touchNearby = (distance < 750);
 
 
   // Determine expression
@@ -141,10 +138,12 @@ void loop() {
     facialExpression = *(SpecialExpressions[Special_Face_Index]);
   }
 
-  //   if (touchNearby) {
-  //     // Allow touch sensor to override expression
-  //     facialExpression = &Face_UWU;
-  //   }
+  // Touch sensor
+  int distance = getDistance();
+  bool touchNearby = (distance < 500);
+  if (touchNearby) {
+    facialExpression = Face_Heart;
+  }
 
 
   // Glitch mode
@@ -181,12 +180,12 @@ void loop() {
 
 
 
-  //   // Debug print code
-  //   // Make sure to enable Serial.begin(9600); in setup
-  //   // if (curTime >= NextPrint) {
-  //   //   NextPrint = millis() + 20;
-  //   //   Serial.println((curTime >= NextBlink));
-  //   // }
+  // Debug print code
+  // Make sure to enable Serial.begin(9600); in setup
+  // if (curTime >= NextPrint) {
+  //   NextPrint = millis() + 20;
+  //   Serial.println(distance);
+  // }
 }
 
 
@@ -224,15 +223,15 @@ byte reverse(byte b) {
   return b;
 }
 
+int getDistance() {
+  return 1023 - analogRead(DistanceAnalogPin);  // Higher value = further away
+}
+
 
 // /// Returns a two decimal number for the temperature in celcius
 // // float getTemperature() {
 // //   float voltage = analogRead(TemperatureAnalogPin) * 0.004882814;
 // //   return (voltage - 0.5) * 100;
-// // }
-
-// // int getDistance() {
-// //   return 1023 - analogRead(DistanceAnalogPin);  // Higher value = further away
 // // }
 
 // // bool isButtonDown() {
