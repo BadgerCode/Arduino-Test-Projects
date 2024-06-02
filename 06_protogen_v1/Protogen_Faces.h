@@ -258,13 +258,12 @@ struct FaceExpression Face_Binary = {
 };
 
 
-const int NumSpecialFaces = 11;
+const int NumSpecialFaces = 10;
 struct FaceExpression* SpecialExpressions[NumSpecialFaces] = {
   &Face_UWU,
   &Face_X_X,
   &Face_Happy_Closed_eyes,
   &Face_OWO,
-  &Face_Heart,
   &Face_Bored,
   &Face_Neutral_Flat,
   &Face_AmongUs,
