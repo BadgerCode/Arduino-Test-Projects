@@ -217,7 +217,7 @@ void loop() {
     if(NextLEDStripUpdate <= curTime) {
       for (int i = 0; i < LEDSTRIP_NUM_LEDS; i++) {
         LEDSTRIP_LEDS[i] = CHSV(ledStripHue, 255, 255);
-        ledStripHue += 15;
+        ledStripHue += 16;
       }
 
       NextLEDStripUpdate = curTime + 40;
