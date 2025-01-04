@@ -278,18 +278,19 @@ struct FaceExpression Face_Cute = {
 };
 
 
-const int NumSpecialFaces = 11;
+
+const int NumSpecialFaces = 4;
 struct FaceExpression* SpecialExpressions[NumSpecialFaces] = {
-  &Face_UWU,
-  &Face_X_X,
+  // &Face_UWU,
+  // &Face_X_X,
   &Face_Happy_Closed_eyes,
   &Face_OWO,
-  &Face_Bored,
+  // &Face_Bored,
   &Face_Neutral_Flat,
-  &Face_AmongUs,
-  &Face_Angry,
-  &Face_Surprised,
-  &Face_Binary,
+  // &Face_AmongUs,
+  // &Face_Angry,
+  // &Face_Surprised,
+  // &Face_Binary,
   &Face_Cute
 };
 
