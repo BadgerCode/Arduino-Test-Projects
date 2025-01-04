@@ -112,6 +112,8 @@ uint8_t ledStripHue = 0;
 unsigned long NextLEDStripUpdate = millis();
 
 
+bool heartFaceRendered = false;
+
 
 void loop() {
   unsigned long curTime = millis();
@@ -165,6 +167,7 @@ void loop() {
   bool touchNearby = (distance < 500);
   if (touchNearby) {
     facialExpression = Face_Heart;
+    Face_OffsetY = 0; // TODO: temporary optimisation for expensive face re-rendering
   }
 
 
@@ -183,23 +186,31 @@ void loop() {
   }
 
 
-  // Mouth
-  renderLeftAndRightPanel(PANEL_MOUTH1, (facialExpression).Mouth[0], false, Face_OffsetX, Face_OffsetY, rowMappings);
-  renderLeftAndRightPanel(PANEL_MOUTH2, (facialExpression).Mouth[1], false, Face_OffsetX, Face_OffsetY, rowMappings);
-  renderLeftAndRightPanel(PANEL_MOUTH3, (facialExpression).Mouth[2], false, Face_OffsetX, Face_OffsetY, rowMappings);
-  renderLeftAndRightPanel(PANEL_MOUTH4, (facialExpression).Mouth[3], false, Face_OffsetX, Face_OffsetY, rowMappings);
+  if(!heartFaceRendered) {
+    // TODO: Instead of re-rendering the entire face each loop, only re-render rows that have changed
+    // Store one half of the face as a series of rows (numbers)
+    // Track the previous and current face
+    // Render any rows that are different
+    // Expression + Offset -> LED Rows -> Render different rows
 
-  // Nose
-  renderLeftAndRightPanel(PANEL_NOSE, (facialExpression).Nose[0], true, 0, 0, rowMappings);
+    // Mouth
+    renderLeftAndRightPanel(PANEL_MOUTH1, (facialExpression).Mouth[0], false, Face_OffsetX, Face_OffsetY, rowMappings);
+    renderLeftAndRightPanel(PANEL_MOUTH2, (facialExpression).Mouth[1], false, Face_OffsetX, Face_OffsetY, rowMappings);
+    renderLeftAndRightPanel(PANEL_MOUTH3, (facialExpression).Mouth[2], false, Face_OffsetX, Face_OffsetY, rowMappings);
+    renderLeftAndRightPanel(PANEL_MOUTH4, (facialExpression).Mouth[3], false, Face_OffsetX, Face_OffsetY, rowMappings);
+
+    // Nose
+    renderLeftAndRightPanel(PANEL_NOSE, (facialExpression).Nose[0], true, 0, 0, rowMappings);
 
 
-  // Eyes
-  bool shouldBlink = (curTime >= NextBlink);
-  EyeFrame* eyes = shouldBlink ? &((facialExpression).Eye_Blink) : &((facialExpression).Eye);
-  renderLeftAndRightPanel(PANEL_EYE1, (*eyes)[0], true, Face_OffsetX, Face_OffsetY, rowMappings);
-  renderLeftAndRightPanel(PANEL_EYE2, (*eyes)[1], true, Face_OffsetX, Face_OffsetY, rowMappings);
+    // Eyes
+    bool shouldBlink = (curTime >= NextBlink);
+    EyeFrame* eyes = shouldBlink ? &((facialExpression).Eye_Blink) : &((facialExpression).Eye);
+    renderLeftAndRightPanel(PANEL_EYE1, (*eyes)[0], true, Face_OffsetX, Face_OffsetY, rowMappings);
+    renderLeftAndRightPanel(PANEL_EYE2, (*eyes)[1], true, Face_OffsetX, Face_OffsetY, rowMappings);
+  }
 
-
+  heartFaceRendered = touchNearby; // TODO: temporary optimisation for expensive face re-rendering
 
   // LED strips
   if(touchNearby) {
