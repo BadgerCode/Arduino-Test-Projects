@@ -1,12 +1,24 @@
+#include <FastLED.h>
 #include "LedControl.h"
 #include "Protogen_Faces.h"
 
 
+// LED strips
+#define LEFT_LEDSTRIP_DATA_PIN 9
+#define LEDSTRIP_NUM_LEDS 15
+
+CRGB LEDSTRIP_LEDS[LEDSTRIP_NUM_LEDS];
+
+
+
+// General IO
 int ButtonPin = 0;
 int TemperatureAnalogPin = 1;
 int DistanceAnalogPin = 0;
 
 int Brightness = 6;  // 0 - 15
+
+
 
 
 // Left face
@@ -62,6 +74,10 @@ void setup() {
     RIGHT_LEDs.setIntensity(address, Brightness);  // Set brightness 0-15
     RIGHT_LEDs.clearDisplay(address);              // Turn all LEDs off
   }
+
+
+  // LED strips
+  FastLED.addLeds<NEOPIXEL, LEFT_LEDSTRIP_DATA_PIN>(LEDSTRIP_LEDS, LEDSTRIP_NUM_LEDS);
 }
 
 // Face movement
@@ -89,6 +105,12 @@ int GlitchModeDurationMs = 8000;
 
 // Debug
 unsigned long NextPrint = millis() + 100;
+
+
+// LED Strips
+uint8_t ledStripHue = 0;
+unsigned long NextLEDStripUpdate = millis();
+
 
 
 void loop() {
@@ -178,6 +200,22 @@ void loop() {
   renderLeftAndRightPanel(PANEL_EYE2, (*eyes)[1], true, Face_OffsetX, Face_OffsetY, rowMappings);
 
 
+
+  // LED strips
+  if(touchNearby) {
+    if(NextLEDStripUpdate <= curTime) {
+      for (int i = 0; i < LEDSTRIP_NUM_LEDS; i++) {
+        LEDSTRIP_LEDS[i] = CHSV(ledStripHue, 255, 255);
+        ledStripHue += 15;
+      }
+
+      NextLEDStripUpdate = curTime + 40;
+    }
+  }
+  else {
+    fill_solid(LEDSTRIP_LEDS, LEDSTRIP_NUM_LEDS, CRGB(0, 0, 255));
+  }
+  FastLED.show();
 
 
   // Debug print code
