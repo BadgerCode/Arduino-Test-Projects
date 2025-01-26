@@ -37,22 +37,9 @@
     const dotSize = 20;
     let clickableLights = {};
 
-
-    let nosePatterns = [
-      parseMatrixPattern("B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000"),
-    ];
-
-    let eyePatterns = [
-      parseMatrixPattern("B00000000, B00000011, B00001111, B00111111, B01111111, B11111111, B11111110, B11100000"),
-      parseMatrixPattern("B00000000, B11100000, B11111000, B11111100, B11111110, B11111111, B00000000, B00000000"),
-    ];
-
-    let mouthPatterns = [
-      parseMatrixPattern("B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000"),
-      parseMatrixPattern("B00000000, B00000000, B00000000, B10000000, B01110001, B00011111, B00000011, B00000000"),
-      parseMatrixPattern("B00000000, B00000000, B00000000, B00100000, B11111111, B11100111, B10000000, B00000000"),
-      parseMatrixPattern("B00000000, B00000000, B00000111, B01111100, B11110000, B11000000, B00000000, B00000000"),
-    ];
+    let nosePatterns = [];
+    let eyePatterns = [];
+    let mouthPatterns = [];
 
 
     function updateOutput() {
@@ -131,7 +118,11 @@
 
     function parseMatrixPattern(patternString) {
       return patternString.split(",")
-        .map(row => row.trim().replace("B", "").split("").map(bit => parseInt(bit)));
+        .map(row =>
+          row.trim().replace("B", "")
+            .split("")
+            .map(bit => parseInt(bit))
+        );
     }
 
     function patternToMatrixString(pattern) {
@@ -178,7 +169,7 @@
 
     function resetFace() {
       nosePatterns = [
-        parseMatrixPattern("B01111000, B11000000, B10000000, B00000000, B00000000, B00000000, B00000000, B00000000"),
+        parseMatrixPattern("B00110000, B01110000, B11100000, B11000000, B00000000, B00000000, B00000000, B00000000"),
       ];
 
       eyePatterns = [
