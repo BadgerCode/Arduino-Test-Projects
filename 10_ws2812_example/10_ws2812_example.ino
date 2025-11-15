@@ -1,11 +1,11 @@
 #include <FastLED.h>
 
 #define DATAPIN 9
-#define NUMPANELS 1
+#define NUMPANELS 4
 
 int NumLEDs = NUMPANELS * 64;
 CRGB* LED_Data;
-int Brightness = 125; // 0-255
+int Brightness = 125;  // 0-255
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,8 +16,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  SimpleExample();
-  // FaceExample();
+  // SimpleExample();
+  FaceExample();
 }
 
 
@@ -49,6 +49,11 @@ byte Protogen[8] = {
   B01100000,
 };
 
+byte Eyes[2][8] = {
+  { B00000000, B00000011, B00001111, B00111111, B01111111, B11111111, B11111110, B11100000 },  //
+  { B00000000, B11100000, B11111000, B11111100, B11111110, B11111111, B00000000, B00000000 }
+};
+
 
 void FaceExample() {
   // Renders a protogen face
@@ -57,9 +62,10 @@ void FaceExample() {
   int hue = ((millis() / 50) * 15) % 255;
 
   for (int i = 0; i < NumLEDs; i++) {
-    int row = i % 8;
-    int col = 7 - (i / 8);
-    bool enabled = (Protogen[row] & (1 << (7 - col))) > 0;
+    int row = (i / 8) % 8;
+    int col = i % 8;
+    int eye = 1 - ((i / 64) % 2);
+    bool enabled = (Eyes[eye][row] & (1 << (7 - col))) > 0;
 
     if (enabled)
       LED_Data[i] = CHSV(hue, 255, Brightness);
